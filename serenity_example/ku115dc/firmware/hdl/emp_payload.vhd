@@ -44,29 +44,44 @@ architecture rtl of emp_payload is
   signal rst_loc_reg : std_logic_vector(N_REGION - 1 downto 0);       
   constant N_FRAMES_USED : natural := 1;
   signal start_pf : std_logic_vector(5 downto 0);
-  type pf_input_set is array (natural range <>) of pf_data(N_PF_IN_CHANS - 1 downto 0);
-  type pf_output_set is array (natural range <>) of pf_data(N_PF_OUT_CHANS - 1 downto 0);
-  signal d_pf : pf_input_set(5 downto 0);
-  signal q_pf : pf_output_set(5 downto 0);
+  signal d_pf : pf_data_array(N_PF_IP_CORES - 1 downto 0)(N_PF_IP_CORE_IN_CHANS - 1 downto 0);
+  signal q_pf : pf_data_array(N_PF_IP_CORES - 1 downto 0)(N_PF_IP_CORE_OUT_CHANS - 1 downto 0);
 
 begin
 
 	ipb_out <= IPB_RBUS_NULL;
+	
+	-- TODO this is temporary, while isolating segfault
+	--gDummy : for i in N_PF_IP_CORE_IN_CHANS - 1 downto 0 generate
+	--  d_pf(0)(i) <= d(i).data(31 downto 0);
+	--end generate;
+	
+	--gDummy2 : for i in N_PF_IP_CORE_OUT_CHANS - 1 downto 0 generate
+	--   q(i).data(31 downto 0) <= q_pf(0)(i);
+	--end generate;
 
     multiplex : entity work.multiplexer
-      PORT MAP (
-        clk240                                               => clk_p,
-        clk40                                                => clk_payload(2),
-        rst                                                  => rst_loc,
-        d                                                    => d,
-        start_pf                                             => start_pf,
-        q_pf(N_PF_IN_CHANS - 1 downto 0)                     => d_pf(0),
-        q_pf(2 * N_PF_IN_CHANS - 1 downto N_PF_IN_CHANS)     => d_pf(1),
-        q_pf(3 * N_PF_IN_CHANS - 1 downto 2 * N_PF_IN_CHANS) => d_pf(2),
-        q_pf(4 * N_PF_IN_CHANS - 1 downto 3 * N_PF_IN_CHANS) => d_pf(3),
-        q_pf(5 * N_PF_IN_CHANS - 1 downto 4 * N_PF_IN_CHANS) => d_pf(4),
-        q_pf(6 * N_PF_IN_CHANS - 1 downto 5 * N_PF_IN_CHANS) => d_pf(5)
-    );
+      port map(
+        clk => clk_p,
+        d => d,
+        start_pf => start_pf,
+        q_pf => d_pf
+      );
+
+--    multiplex : entity work.multiplexer
+--      PORT MAP (
+--        clk240                                               => clk_p,
+--        clk40                                                => clk_payload(2),
+--        rst                                                  => rst_loc,
+--        d                                                    => d,
+--        start_pf                                             => start_pf,
+--        q_pf(N_PF_IN_CHANS - 1 downto 0)                     => d_pf(0),
+--        q_pf(2 * N_PF_IN_CHANS - 1 downto N_PF_IN_CHANS)     => d_pf(1),
+--        q_pf(3 * N_PF_IN_CHANS - 1 downto 2 * N_PF_IN_CHANS) => d_pf(2),
+--        q_pf(4 * N_PF_IN_CHANS - 1 downto 3 * N_PF_IN_CHANS) => d_pf(3),
+--        q_pf(5 * N_PF_IN_CHANS - 1 downto 4 * N_PF_IN_CHANS) => d_pf(4),
+--        q_pf(6 * N_PF_IN_CHANS - 1 downto 5 * N_PF_IN_CHANS) => d_pf(5)
+--    );
 
    selector_gen : process (clk_p)
    begin  -- process selector_gen
@@ -75,7 +90,7 @@ begin
       end if;
     end process selector_gen;
 
-    generate_pf_cores : for i in N_FRAMES_USED - 1 downto 0 generate
+    generate_pf_cores : for i in N_PF_IP_CORES - 1 downto 0 generate
       pf_algo : entity work.pf_ip_wrapper
         PORT MAP (
           clk    => clk_p,
@@ -92,18 +107,25 @@ begin
 
     demux : entity work.demultiplexer
       port map (
-        clk240                                                 => clk_p,
-        clk40                                                  => clk_payload(2),
-        rst                                                    => rst_loc,
-        valid                                                  => '1',  -- d(0).valid, -- TODO: Delay.
-        d_pf(1 * N_PF_OUT_CHANS - 1 downto 0)                  => q_pf(0),
-        d_pf(2 * N_PF_OUT_CHANS - 1 downto 1 * N_PF_OUT_CHANS) => q_pf(1),
-        d_pf(3 * N_PF_OUT_CHANS - 1 downto 2 * N_PF_OUT_CHANS) => q_pf(2),
-        d_pf(4 * N_PF_OUT_CHANS - 1 downto 3 * N_PF_OUT_CHANS) => q_pf(3),
-        d_pf(5 * N_PF_OUT_CHANS - 1 downto 4 * N_PF_OUT_CHANS) => q_pf(4),
-        d_pf(6 * N_PF_OUT_CHANS - 1 downto 5 * N_PF_OUT_CHANS) => q_pf(5),
-        q                                                      => q(N_PF_OUT_CHANS - 1 downto 0)
+        clk => clk_p,
+        d_pf => q_pf,
+        q => q(N_OUT_CHANS - 1 downto 0)
       );
+
+--    demux : entity work.demultiplexer
+--      port map (
+--        clk240                                                 => clk_p,
+--        clk40                                                  => clk_payload(2),
+--        rst                                                    => rst_loc,
+--        valid                                                  => '1',  -- d(0).valid, -- TODO: Delay.
+--        d_pf(1 * N_PF_OUT_CHANS - 1 downto 0)                  => q_pf(0),
+--        d_pf(2 * N_PF_OUT_CHANS - 1 downto 1 * N_PF_OUT_CHANS) => q_pf(1),
+--        d_pf(3 * N_PF_OUT_CHANS - 1 downto 2 * N_PF_OUT_CHANS) => q_pf(2),
+--        d_pf(4 * N_PF_OUT_CHANS - 1 downto 3 * N_PF_OUT_CHANS) => q_pf(3),
+--        d_pf(5 * N_PF_OUT_CHANS - 1 downto 4 * N_PF_OUT_CHANS) => q_pf(4),
+--        d_pf(6 * N_PF_OUT_CHANS - 1 downto 5 * N_PF_OUT_CHANS) => q_pf(5),
+--        q                                                      => q(N_PF_OUT_CHANS - 1 downto 0)
+--      );
 
      bc0 <= '0';
      gpio <= (others => '0');

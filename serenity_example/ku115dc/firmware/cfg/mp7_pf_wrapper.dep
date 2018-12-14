@@ -1,9 +1,11 @@
 src emp_payload.vhd
 src pf_ip_wrapper.vhd
-src demultiplexer.vhd
-src demux_quad.vhd
-src multiplexer.vhd
-src mux_quad.vhd
+#src demultiplexer.vhd
+#src demux_quad.vhd
+#src multiplexer.vhd
+#src mux_quad.vhd
+src multiplexerII.vhd
+src demultiplexerII.vhd
 src pf_data_types.vhd
 src pf_constants.vhd
 #?toolset=="Vivado"? src ../ucf/mp7_pf_wrapper.tcl

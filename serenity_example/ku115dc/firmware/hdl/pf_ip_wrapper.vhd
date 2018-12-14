@@ -9,11 +9,11 @@ entity pf_ip_wrapper is
         clk: in std_logic;
         rst: in std_logic;
         start: in std_logic;
-        input: in pf_data(N_PF_IN_CHANS - 1 downto 0);
+        input: in pf_data(N_PF_IP_CORE_IN_CHANS - 1 downto 0);
         done: out std_logic;
         idle: out std_logic;
         ready: out std_logic;
-        output : out pf_data(N_PF_OUT_CHANS - 1 downto 0)
+        output : out pf_data(N_PF_IP_CORE_OUT_CHANS - 1 downto 0)
         );
       
 end pf_ip_wrapper;
