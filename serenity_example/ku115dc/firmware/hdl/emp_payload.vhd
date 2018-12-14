@@ -72,8 +72,8 @@ begin
    begin  -- process selector_gen
      if clk_p'event and clk_p = '1' then  -- rising clock edge
        rst_loc_reg <= rst_loc;
-      edgend if;
-    end processocess selector_gen;
+      end if;
+    end process selector_gen;
 
     generate_pf_cores : for i in N_FRAMES_USED - 1 downto 0 generate
       pf_algo : entity work.pf_ip_wrapper
