@@ -9,7 +9,7 @@ use work.emp_device_decl.all;
 use work.pf_data_types.all;
 use work.pf_constants.all;
 
-entity multiplexer is
+entity multiplexer_orig is
     port (
         clk240: in std_logic;
         clk40: in std_logic;
@@ -19,9 +19,9 @@ entity multiplexer is
         q_pf: out pf_data(6 * N_PF_IN_CHANS - 1 downto 0)
     );
 
-end multiplexer;
+end multiplexer_orig;
 
-architecture rtl of multiplexer is
+architecture rtl of multiplexer_orig is
 
   signal start_pf_vec : std_logic_vector(N_REGION * 6 - 1 downto 0);
   signal rst_reg : std_logic_vector(N_REGION - 1 downto 0);

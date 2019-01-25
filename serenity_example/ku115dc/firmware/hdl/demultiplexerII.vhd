@@ -15,8 +15,8 @@ entity demultiplexer is
     --clk40 : in std_logic;
     clk : in std_logic;
     --rst : in std_logic;
-    d_pf : in pf_data_array(N_PF_IP_CORES - 1 downto 0)(N_PF_IP_CORE_OUT_CHANS - 1 downto 0);
-    q : out ldata(N_OUT_CHANS - 1 downto 0)
+    d_pf : in pf_data_array_out; --(N_PF_IP_CORES - 1 downto 0)(N_PF_IP_CORE_OUT_CHANS - 1 downto 0);
+    q : out ldata(N_OUT_CHANS - 1 downto 0) 
   );
 end demultiplexer;
 
@@ -44,8 +44,12 @@ begin
     begin
       if rising_edge(clk) then
         -- + PF_ALGO_LATENCY mod 6 to align with the PF core output
-        q(i).data(31 downto 0) <= d_pf(sel(i) + PF_ALGO_LATENCY mod 6)(i);
+        q(i).data(63 downto 32) <= (others => '0');
+        q(i).data(31 downto 0) <= d_pf(0)(i);
+        --q(i).data(31 downto 0) <= d_pf((sel(i) + PF_ALGO_LATENCY) mod 6)(i);
         q(i).strobe <= '1';
+        q(i).valid <= '1';
+        q(i).start <= '0';
       end if;
     end process mux_process;
   end generate gMux;

@@ -1,0 +1,3 @@
+include mp7_pf_wrapper_sim.dep
+setup build.tcl
+iprepo /home/sioni/p2fwk-work/src/GlobalCorrelator_HLS/proj3-mp7-fast/solution/impl/ip/

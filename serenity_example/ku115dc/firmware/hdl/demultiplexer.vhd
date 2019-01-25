@@ -7,7 +7,7 @@ use work.emp_device_decl.all;
 use work.pf_data_types.all;
 use work.pf_constants.all;
 
-entity demultiplexer is
+entity demultiplexer_orig is
   port (
     clk240 : in std_logic;
     clk40  : in std_logic;
@@ -17,9 +17,9 @@ entity demultiplexer is
     q      : out ldata(N_PF_OUT_CHANS - 1 downto 0)
   );
 
-end demultiplexer;
+end demultiplexer_orig;
 
-architecture rtl of demultiplexer is
+architecture rtl of demultiplexer_orig is
 
   signal rst_reg    : std_logic_vector(N_REGION - 1 downto 0);
   signal sValid_reg : std_logic;

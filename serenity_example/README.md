@@ -15,7 +15,7 @@ ipbb add git https://github.com/p2l1pfp/GlobalCorrelator_HLS -b mp7
 
 ```
 ipbb add git https://github.com/thesps/GlobalCorrelator_II
-ipbb proj create vivado serenity_now emp-fwk:projects/examples/ku115dc  -t top.dep
+ipbb proj create vivado serenity_now GlobalCorrelator_II:serenity_example/ku115dc -t top.dep
 cd proj/serenity_now
 ```
 

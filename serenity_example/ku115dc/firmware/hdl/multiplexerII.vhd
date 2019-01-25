@@ -18,7 +18,7 @@ entity multiplexer is
     --rst : in std_logic;
     d : in ldata(N_IN_CHANS - 1 downto 0);
     start_pf : out std_logic_vector(PF_RESHAPE_FACTOR - 1 downto 0);
-    q_pf : out pf_data_array(N_PF_IP_CORES - 1 downto 0)(N_PF_IP_CORE_IN_CHANS - 1 downto 0)
+    q_pf : out pf_data_array_in --(N_PF_IP_CORES - 1 downto 0)(N_PF_IP_CORE_IN_CHANS - 1 downto 0)
   );
 end multiplexer;
 
